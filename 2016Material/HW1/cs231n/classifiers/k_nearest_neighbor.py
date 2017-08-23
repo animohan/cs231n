@@ -60,10 +60,10 @@ class KNearestNeighbor(object):
       is the Euclidean distance between the ith test point and the jth training
       point.
     """
-    num_test = X.shape[0]
-    print("Num_test = ", num_test) 
-    num_train = self.X_train.shape[0]
-    print("Num_train = ", num_train)
+    num_test = X.shape
+    print("Num_test1 = ", num_test) 
+    num_train = self.X_train.shape
+    print("Num_train1 = ", num_train)
     dists = np.zeros((num_test, num_train))
     for i in np.arange(num_test):
       for j in np.arange(num_train):
