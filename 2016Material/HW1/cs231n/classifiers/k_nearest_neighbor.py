@@ -60,14 +60,22 @@ class KNearestNeighbor(object):
       is the Euclidean distance between the ith test point and the jth training
       point.
     """
-    num_test = X.shape
-    print("Num_test1 = ", num_test) 
-    num_train = self.X_train.shape
-    print("Num_train1 = ", num_train)
+    num_test = X.shape[0]
+    num_train = self.X_train.shape[0]
+    print("Num_test = ", num_test) 
+    print("Num_train = ", num_train)
+    print("Train Shape = ", self.X_train.shape)
+    print("Test Shape = ", X.shape)
+    
     dists = np.zeros((num_test, num_train))
+    print("xtrain", self.X_train[0,0:10])
+    print("xtest", X[0,0:10])
+    print("xtest sum",np.sum(X[0,:]))
+    print("0th entry", np.sum((self.X_train[0]- X[0])**2))
+    print("10 Differences", (self.X_train[0]- X[0])[0:10])
     for i in np.arange(num_test):
       for j in np.arange(num_train):
-        dists[i,j] = np.sqrt(np.sum((self.X_train[j] - X[i])**2))
+        dists[i,j] = (np.sum((self.X_train[j,:] - X[i,:])**2))
         #####################################################################
         # TODO:                                                             #
         # Compute the l2 distance between the ith test point and the jth    #
@@ -145,12 +153,23 @@ class KNearestNeighbor(object):
     - y: A numpy array of shape (num_test,) containing predicted labels for the
       test data, where y[i] is the predicted label for the test point X[i].  
     """
+    print("In Predict labels: Distance shape", dists.shape)
     num_test = dists.shape[0]
     y_pred = np.zeros(num_test)
     for i in np.arange(num_test):
       # A list of length k storing the labels of the k nearest neighbors to
       # the ith test point.
       closest_y = []
+      ypred = np.ones(num_test)*np.NaN
+      nnindex = np.ones(num_test)*np.NaN
+      for i in np.arange(num_test):
+             nearest_neighbor_index= np.argmin(dists[i,:])
+             nnindex[i] = nearest_neighbor_index
+             y_pred[i]  = self.y_train[nearest_neighbor_index]
+    print("Distance Matrix", dists[0:2,0:2] )
+    print("Nearest Neighbor index", nnindex[0:10])
+    print(self.y_train[420])
+    print(y_pred[0:10])
       #########################################################################
       # TODO:                                                                 #
       # Use the distance matrix to find the k nearest neighbors of the ith    #
@@ -158,7 +177,7 @@ class KNearestNeighbor(object):
       # neighbors. Store these labels in closest_y.                           #
       # Hint: Look up the function numpy.argsort.                             #
       #########################################################################
-      pass
+      #pass
       #########################################################################
       # TODO:                                                                 #
       # Now that you have found the labels of the k nearest neighbors, you    #
@@ -166,7 +185,7 @@ class KNearestNeighbor(object):
       # Store this label in y_pred[i]. Break ties by choosing the smaller     #
       # label.                                                                #
       #########################################################################
-      pass
+      #pass
       #########################################################################
       #                           END OF YOUR CODE                            # 
       #########################################################################
