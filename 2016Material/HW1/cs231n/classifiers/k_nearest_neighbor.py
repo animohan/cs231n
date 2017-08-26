@@ -76,7 +76,8 @@ class KNearestNeighbor(object):
     for i in np.arange(num_test):
       for j in np.arange(num_train):
         dists[i,j] = (np.sum((self.X_train[j,:] - X[i,:])**2))
-        #####################################################################
+        
+        ########################COMPLETED ABOVE##############################
         # TODO:                                                             #
         # Compute the l2 distance between the ith test point and the jth    #
         # training point, and store the result in dists[i, j]. You should   #
@@ -99,9 +100,9 @@ class KNearestNeighbor(object):
     num_train = self.X_train.shape[0]
     dists = np.zeros((num_test, num_train))
     for i in np.arange(num_test):
-        dists[i,:] = np.sqrt(np.sum((Self.X_train - X[i])**2,axis = 1))
+        dists[i,:] = (np.sum((self.X_train - X[i])**2,axis = 1))
  
-      #######################################################################
+      ####################COMPLETED##########################################
       # TODO:                                                               #
       # Compute the l2 distance between the ith test point and all training #
       # points, and store the result in dists[i, :].                        #
@@ -134,7 +135,7 @@ class KNearestNeighbor(object):
     # HINT: Try to formulate the l2 distance using matrix multiplication    #
     #       and two broadcast sums.                                         #
     #########################################################################
-    pass
+    # pass
     #########################################################################
     #                         END OF YOUR CODE                              #
     #########################################################################
@@ -160,17 +161,20 @@ class KNearestNeighbor(object):
       # A list of length k storing the labels of the k nearest neighbors to
       # the ith test point.
       closest_y = []
+      
       ypred = np.ones(num_test)*np.NaN
-      nnindex = np.ones(num_test)*np.NaN
+      nearest_neighbor_index = np.empty([k])  
       for i in np.arange(num_test):
-             nearest_neighbor_index= np.argmin(dists[i,:])
-             nnindex[i] = nearest_neighbor_index
-             y_pred[i]  = self.y_train[nearest_neighbor_index]
-    print("Distance Matrix", dists[0:2,0:2] )
-    print("Nearest Neighbor index", nnindex[0:10])
-    print(self.y_train[420])
-    print(y_pred[0:10])
-      #########################################################################
+             nearest_neighbor_index= np.argsort(dists[i,:])[0:k]
+             nearest_neighbor = self.y_train[nearest_neighbor_index]
+             y_pred[i] = np.argmax(np.bincount(nearest_neighbor))
+                # np.bincount creates a counter from 0 to max number in passed value.
+                # and gives a count of each number e.g np.bincount([0,2,2,3]) = [1,0,2,1]
+                # Argmax gives the index of the maximum count which for bincount is the 
+                # number that has the highest count
+    return y_pred                                
+           
+      ####################COMPLETED############################################
       # TODO:                                                                 #
       # Use the distance matrix to find the k nearest neighbors of the ith    #
       # testing point, and use self.y_train to find the labels of these       #
@@ -190,5 +194,5 @@ class KNearestNeighbor(object):
       #                           END OF YOUR CODE                            # 
       #########################################################################
 
-    return y_pred
+
 
