@@ -1,5 +1,6 @@
 import numpy as np
 from random import shuffle
+from past.builtins import xrange
 
 def svm_loss_naive(W, X, y, reg):
   """
@@ -22,79 +23,25 @@ def svm_loss_naive(W, X, y, reg):
   dW = np.zeros(W.shape) # initialize the gradient as zero
 
   # compute the loss and the gradient
-  num_classes = W.shape[1] #W shape (DxC) = (Dimension of input data point * Number of Classes)
-  num_train = X.shape[0] # X shape = (NxD) = (Number of Datapoints * Dimension of Each datapoint)
+  num_classes = W.shape[1]
+  num_train = X.shape[0]
   loss = 0.0
-  for i in np.arange(num_train):
+  for i in xrange(num_train):
     scores = X[i].dot(W)
     correct_class_score = scores[y[i]]
-    
-    margin_greater_than_zero = 0
-    for j in np.arange(num_classes):
+    for j in xrange(num_classes):
       if j == y[i]:
         continue
       margin = scores[j] - correct_class_score + 1 # note delta = 1
       if margin > 0:
-        loss = loss + margin
-        margin_greater_than_zero = margin_greater_than_zero + 1
-        dW[:,j] = dW[:,j] + X[i]       
-    
-    dW[:,y[i]] = dW[:,y[i]] + (-1 *  X[i] * margin_greater_than_zero)
-     
-    W = W - dW
-    
-    '''
-         Reasoning for dW
-         L = sum( max(0, W*Xj - W*Xi) where i = true class and j = all wrong classes
-         dL/dW = 0 if W*Xj - W*Xi < 0
-         dL/dW = dL/dW1 (function) + dL/dW2 (function).. i.e it is the sum of partial derivatives
-         
-         Matrix Structure: W = D*C
-         This is for the ith image
-         [Xi1 Xi2 ... XiD]      |   |      |
-                             *  |   |      |   
-                                W1  W2 ... WC
-                                |   |      |
-                                |   |      |
-         Assume true class is 5th
-         dL/dW1 = d/dW1( max(0,W1*Xi1 - W5*Xi5) + max(0, W2*Xi2 - W5*Xi5) + ....)
-         dL/dW1 = d/dW1 (max(0, W1*Xi1 - W5*Xi5)  # Rest of the partial derivatives are zero
-         dL/dW1 = d/dW1(W1*Xi1 - W5*Xi5) if W1*Xi1 - W5*Xi5 > 0
-         dL/dW1 = Xi1 - 0 if (W1*Xi1 - W5*Xi5) >0
-         Hence
-             dL/dW1 = Xi1 if (W1*Xi1 - W5*Xi5) >0
-             dL/dW1 = 0  (W1*Xi1 - W5*Xi5)= <0
-        
-        Additionally:
-         We do not change W with each image, but keep on accumulating the gradients in dW
-    '''
+        loss += margin
 
-        
-    #Calculate the gradient numerically
-    '''
-        tempW = W
-        gradientLoss = 0.0
-        delta = 0.001
-        for k in np.arange(W.shape[0]):
-                for l in np.arange(W.shape[1]):
-                    tempW[k,l] = W[k,l] + delta
-                    scores = X[i].dot(tempW)
-
-                    for m in np.arange(num_classes):
-                        if m == y[i]:
-                            continue
-                        margin = scores[m] - correct_class_score + 1
-                        if margin > 0:
-                            gradientLoss =margin + gradientLoss
-
-                    dW[l,m] = dW[l,m] + (gradientLoss - loss)/delta
-    '''
   # Right now the loss is a sum over all training examples, but we want it
   # to be an average instead so we divide by num_train.
-  loss = loss/num_train
+  loss /= num_train
 
   # Add regularization to the loss.
-  loss = loss + 0.5 * reg * np.sum(W * W)
+  loss += reg * np.sum(W * W)
 
   #############################################################################
   # TODO:                                                                     #
