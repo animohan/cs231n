@@ -29,17 +29,17 @@ def svm_loss_naive(W, X, y, reg):
     scores = X[i].dot(W)
     correct_class_score = scores[y[i]]
     
+    margin_greater_than_zero = 0
     for j in np.arange(num_classes):
       if j == y[i]:
         continue
       margin = scores[j] - correct_class_score + 1 # note delta = 1
       if margin > 0:
         loss = loss + margin
-        #dW[:,j] = dW[:,j] + X[j] 
-        dW[:,j] = X[j] 
-      else:
-        #dW[:,j] = dW[:,j] + 0
-        dW[:,j] = 0
+        margin_greater_than_zero = margin_greater_than_zero + 1
+        dW[:,j] = dW[:,j] + X[i]       
+    
+    dW[:,y[i]] = dW[:,y[i]] + (-1 *  X[i] * margin_greater_than_zero)
      
     W = W - dW
     
