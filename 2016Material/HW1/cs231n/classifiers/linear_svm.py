@@ -108,10 +108,17 @@ def svm_loss_vectorized(W, X, y, reg):
   row_index = np.array([np.arange(num_train)])
   scores = X.dot(W)
   correct_scores = scores[row_index, y]
-  scores = scores - correct_scores.T
-  loss = np.sum(scores[scores>=0])
+  scores = scores - correct_scores.T + 1 #updating the scores matrix
+        #to see if the score for each class for a particular row of X (X[i])
+        #is bigger than correct class score atleast by 1(Delta)
+        
+  scores[row_index, y ] = 0; #Setting correct label scores to be zero
+  loss = np.sum(scores[scores>0]) / num_train
+    
+   # Add regularization to the loss.
+  loss = loss + 0.5 * reg * np.sum(W * W)
 
-  #############################################################################
+  ########################COMPLETED############################################
   # TODO:                                                                     #
   # Implement a vectorized version of the structured SVM loss, storing the    #
   # result in loss.                                                           #
@@ -120,8 +127,20 @@ def svm_loss_vectorized(W, X, y, reg):
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
-
-
+    
+   
+  score_bool = scores
+  score_bool[score_bool > 0] = 1
+  score_bool[score_bool <=0] = 0
+  print(score_bool[0:10,0:10])
+  
+  dW = (X.T).dot(score_bool)
+  scaledX = -1 * (X.T) * np.sum(score_bool, axis = 1)
+  indexval = np.array(np.arange(num_train))
+  dW[:,y[indexval]] = dW[:, y[indexval]] + scaledX[:,indexval]
+  dW = dW/num_train
+  dW = dW + 2*reg*W
+    
   #############################################################################
   # TODO:                                                                     #
   # Implement a vectorized version of the gradient for the structured SVM     #
