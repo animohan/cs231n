@@ -62,17 +62,17 @@ class KNearestNeighbor(object):
     """
     num_test = X.shape[0]
     num_train = self.X_train.shape[0]
-    print("Num_test = ", num_test) 
-    print("Num_train = ", num_train)
-    print("Train Shape = ", self.X_train.shape)
-    print("Test Shape = ", X.shape)
+    #print("Num_test = ", num_test) 
+    #print("Num_train = ", num_train)
+    #print("Train Shape = ", self.X_train.shape)
+    #print("Test Shape = ", X.shape)
     
     dists = np.zeros((num_test, num_train))
-    print("xtrain", self.X_train[0,0:10])
-    print("xtest", X[0,0:10])
-    print("xtest sum",np.sum(X[0,:]))
-    print("0th entry", np.sum((self.X_train[0]- X[0])**2))
-    print("10 Differences", (self.X_train[0]- X[0])[0:10])
+    #print("xtrain", self.X_train[0,0:10])
+    #print("xtest", X[0,0:10])
+    #print("xtest sum",np.sum(X[0,:]))
+    #print("0th entry", np.sum((self.X_train[0]- X[0])**2))
+    #print("10 Differences", (self.X_train[0]- X[0])[0:10])
     for i in np.arange(num_test):
       for j in np.arange(num_train):
         dists[i,j] = (np.sum((self.X_train[j,:] - X[i,:])**2))
@@ -122,8 +122,18 @@ class KNearestNeighbor(object):
     """
     num_test = X.shape[0]
     num_train = self.X_train.shape[0]
-    dists = np.zeros((num_test, num_train)) 
-    #########################################################################
+    dists = np.zeros((num_test, num_train))
+    
+    sqr_Xtrain = np.sum(self.X_train**2, axis = 1)
+    sqr_Xtest = np.sum(X**2, axis = 1)
+    sqr_Xtrain = np.reshape(sqr_Xtrain, [1,sqr_Xtrain.shape[0]])
+    sqr_Xtest = np.reshape(sqr_Xtest, [sqr_Xtest.shape[0],1])
+    dists = sqr_Xtrain + sqr_Xtest - 2*X.dot(self.X_train.T)
+    #print("Reshaped Xtrain:", sqr_Xtrain.shape)
+    #print("Reshaped Xtest:", sqr_Xtest.shape)
+    #dists = np.sum((reshaped_Xtrain - reshaped_Xtest)**2, axis = 2)
+                                   
+    #####################COMPLETED###########################################
     # TODO:                                                                 #
     # Compute the l2 distance between all test points and all training      #
     # points without using any explicit loops, and store the result in      #
