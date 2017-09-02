@@ -164,7 +164,7 @@ class KNearestNeighbor(object):
     - y: A numpy array of shape (num_test,) containing predicted labels for the
       test data, where y[i] is the predicted label for the test point X[i].  
     """
-    print("In Predict labels: Distance shape", dists.shape)
+    #print("In Predict labels: Distance shape", dists.shape)
     num_test = dists.shape[0]
     y_pred = np.zeros(num_test)
     for i in np.arange(num_test):
@@ -172,11 +172,14 @@ class KNearestNeighbor(object):
       # the ith test point.
       closest_y = []
       
-      ypred = np.ones(num_test)*np.NaN
+      y_pred = np.ones(num_test)*np.NaN
       nearest_neighbor_index = np.empty([k])  
       for i in np.arange(num_test):
              nearest_neighbor_index= np.argsort(dists[i,:])[0:k]
+             #print(nearest_neighbor_index)
+             #print(self.y_train.shape)
              nearest_neighbor = self.y_train[nearest_neighbor_index]
+             
              y_pred[i] = np.argmax(np.bincount(nearest_neighbor))
                 # np.bincount creates a counter from 0 to max number in passed value.
                 # and gives a count of each number e.g np.bincount([0,2,2,3]) = [1,0,2,1]
